@@ -1,0 +1,5 @@
+SignalR.Transports.TransportHeartBeat Information: 0 : Connection 59b2c09f-702e-465c-a9c7-7f59a6152b5d is New.
+SignalR.Transports.TransportHeartBeat Verbose: 0 : KeepAlive(59b2c09f-702e-465c-a9c7-7f59a6152b5d)
+SignalR.Transports.TransportHeartBeat Verbose: 0 : KeepAlive(59b2c09f-702e-465c-a9c7-7f59a6152b5d)
+SignalR.Transports.TransportHeartBeat Verbose: 0 : KeepAlive(59b2c09f-702e-465c-a9c7-7f59a6152b5d)
+SignalR.Transports.TransportHeartBeat Verbose: 0 : KeepAlive(59b2c09f-702e-465c-a9c7-7f59a6152b5d)

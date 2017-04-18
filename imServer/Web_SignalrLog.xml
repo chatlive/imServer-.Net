@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<system.diagnostics>
+  <sources>
+    <source name="SignalR.SqlMessageBus">
+      <listeners>
+        <add name="SignalR-Bus" />
+      </listeners>
+    </source>
+    <source name="SignalR.ServiceBusMessageBus">
+      <listeners>
+        <add name="SignalR-Bus" />
+      </listeners>
+    </source>
+    <source name="SignalR.RedisMessageBus">
+      <listeners>
+        <add name="SignalR-Bus" />
+      </listeners>
+    </source>
+    <source name="SignalR.ScaleoutMessageBus">
+      <listeners>
+        <add name="SignalR-Bus" />
+      </listeners>
+    </source>
+    <source name="SignalR.Transports.WebSocketTransport">
+      <listeners>
+        <add name="SignalR-Transports" />
+      </listeners>
+    </source>
+    <source name="SignalR.Transports.ServerSentEventsTransport">
+      <listeners>
+        <add name="SignalR-Transports-ServerSentEventsTransport" />
+      </listeners>
+    </source>
+    <source name="SignalR.Transports.ForeverFrameTransport">
+      <listeners>
+        <add name="SignalR-Transports" />
+      </listeners>
+    </source>
+    <source name="SignalR.Transports.LongPollingTransport">
+      <listeners>
+        <add name="SignalR-Transports" />
+      </listeners>
+    </source>
+    <source name="SignalR.Transports.TransportHeartBeat">
+      <listeners>
+        <add name="SignalR-Transports-TransportHeartBeat" />
+      </listeners>
+    </source>
+    <source name="SignalR.ReflectedHubDescriptorProvider">
+      <listeners>
+        <add name="SignalR-Init" />
+      </listeners>
+    </source>
+  </sources>
+  <!-- Sets the trace verbosity level -->
+  <switches>
+    <add name="SignalRSwitch" value="Verbose" />
+  </switches>
+  <!-- Specifies the trace writer for output -->
+  <sharedListeners>
+    <!--System.Diagnostics.TextWriterTraceListener-->
+
+    <!--Listener for transport events-->
+    <add name="SignalR-Transports" type="System.Diagnostics.TextWriterTraceListener" initializeData="Logs\transports.log" />
+    <!--Listener for transport events-->
+    <add name="SignalR-Transports-ServerSentEventsTransport" type="System.Diagnostics.TextWriterTraceListener" initializeData="Logs\transports_ServerSentEventsTransport.log" />
+    <!--Listener for transport events-->
+    <add name="SignalR-Transports-TransportHeartBeat" type="System.Diagnostics.TextWriterTraceListener" initializeData="Logs\transports_TransportHeartBeat.log" />
+    <!--Listener for scaleout provider events-->
+    <add name="SignalR-Bus" type="System.Diagnostics.TextWriterTraceListener" initializeData="Logs\bus.log" />
+    <!--Listener for hub discovery events-->
+    <add name="SignalR-Init" type="System.Diagnostics.TextWriterTraceListener" initializeData="Logs\init.log" />
+
+  </sharedListeners>
+  <trace autoflush="true" />
+</system.diagnostics>
