@@ -1,0 +1,55 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta charset="utf-8" />
+    <script src="~/Scripts/jquery-3.1.1.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.1.js"></script>
+    <script src="~/Scripts/hubs.js"></script>
+</head>
+<body>
+    <script>
+        $(document).ready(function () {
+            $.connection.hub.url = "http://localhost:49208/signalr";
+            var _hubConnection = $.hubConnection();
+            var _chatHubProxy = undefined;
+
+            function _initialize() {
+                _chatHubProxy = _hubConnection.createHubProxy('chatHub');
+
+                _chatHubProxy.logging = true;
+
+                _chatHubProxy.on('broadcastMessage', onNewMessage);
+
+                _hubConnection.start()
+                    .done(connectedToSignalR)
+                    .fail(function () {
+                        console.log('Error connecting to signalR');
+                    });
+            }
+
+            function onNewMessage(name, message) {
+                console.log('broadcastMessage' + " " + message);
+            }
+
+            function connectedToSignalR() {
+                console.log('connected to signalR, connection ID =' + _hubConnection.id);
+            }
+
+            function _send(message) {
+                _chatHubProxy.invoke('Send', message);
+            }
+
+            _initialize();
+        });
+    </script>
+
+</body>
+</html>

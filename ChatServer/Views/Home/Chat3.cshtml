@@ -1,0 +1,160 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Chat3</title>
+    <script src="~/Scripts/jquery-3.1.1.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.1.js"></script>
+    <script src="~/Scripts/hubs.js"></script>
+</head>
+<body>
+    <div>
+        <h2>Chat</h2>
+        <div class="container">
+            <input type="text" id="message" />
+            <input type="button" id="sendmessage" value="Send" />
+            <input type="hidden" id="displayname" />
+            <ul id="discussion"></ul>
+        </div>
+    </div>
+    <script>
+
+        // Get the user name and store it to prepend to messages.
+        $('#displayname').val(prompt('Enter your name:', ''));
+        // Set initial focus to message input box.
+        $('#message').focus();
+
+        var HubKey_App = 'app003';
+        var tryingToReconnect = false;
+
+        //$.connection.hub.url = 'http://localhost:49208/signalr';
+        $.connection.hub.url = 'http://localhost:9090/signalr';
+        var chatHub = $.connection.imHub;
+
+        /************************************服务端api--开始*********************************************/
+        var _hello = function (name, message) {
+            chatHub.server.hello(name, message)
+                .done(function (data) {//服务器端有返回值，无返回值
+
+                })
+                .fail(function (error) {
+                    console.log('Error server.hello: ' + error);
+                });
+        };
+
+        var get_App__Account = function (app, account) {
+            var appAccount = app + '__' + account;
+            return appAccount;
+        };
+
+        var get_Account = function () {
+            var account = $('#displayname').val();
+            return account;
+        };
+
+
+        // This optional function html-encodes messages for display in the page.
+        var htmlEncode = function (value) {
+            var encodedValue = $('<div />').text(value).html();
+            return encodedValue;
+        };
+
+        /************************************服务端api--结束*********************************************/
+
+        /************************************连接生命周期api--开始*********************************************/
+
+        var init_lifetime = function (hub) {
+            hub.starting(starting);
+            hub.received(received);
+            hub.connectionSlow(connectionSlow);
+            hub.reconnecting(reconnecting);
+            hub.reconnected(reconnected);
+            hub.stateChanged(stateChanged);
+            hub.disconnected(disconnected);
+            hub.error(error);
+        };
+
+        var start = function () {
+            $.connection.hub.start({ transport: ['webSockets', 'longPolling'] })
+                .done(function () {
+                    console.log('Now connected, connection ID=' + $.connection.hub.id);
+                    console.log("Connected, transport = " + $.connection.hub.transport.name);
+                })
+                .fail(function () {
+                    console.log('Could not Connect!');
+                });
+        };//连接服务器事件处理程序
+        var starting = function (connection) { };
+        var received = function (connection, data) { };
+        var connectionSlow = function (connection) {
+            console.log('连接缓慢~~~~(>_<)~~~~');
+        };
+        var reconnecting = function (connection) {
+            tryingToReconnect = true;
+            console.log('正在重新连接...');
+        };
+        var reconnected = function (connection) {
+            console.log('重新连接成功O(∩_∩)O~');
+            tryingToReconnect = false;
+        };
+        var stateChanged = function (connection, data) { };
+        var disconnected = function (connection) {
+            if (tryingToReconnect) {
+                console.log('连接已经断开！！！');
+            }
+
+            if ($.connection.hub.lastError) {
+                console.log("断开连接. 原因: " + $.connection.hub.lastError.message);
+            }
+            setTimeout(function () { start(); }, 30000); // Restart connection after 30 seconds.
+
+        };
+        var error = function (connection, errorData, sendData) {
+            console.log('SignalR error: ' + errorData);
+        };
+
+
+        /************************************连接生命周期api--结束*********************************************/
+
+        /************************************客户端api--开始*********************************************/
+        var init_client = function (client) {
+            client.broadcastMessage = broadcastMessage;
+            client.stopClient = stopClient;
+        };
+
+        var broadcastMessage = function (name, message) {
+            // Add the message to the page.
+            $('#discussion').append('<li><strong>' + htmlEncode(name)
+                + '</strong>: ' + htmlEncode(message) + '</li>');
+        };
+        var stopClient = function () {
+            $.connection.hub.stop();
+        };
+        /************************************客户端api--结束*********************************************/
+
+
+        $.connection.hub.qs = { 'HubKey_App': HubKey_App, 'HubKey_Account': get_Account() };
+        $.connection.hub.logging = true;
+
+        init_lifetime($.connection.hub);
+        init_client(chatHub.client);
+
+        $(document).ready(function () {
+
+            $('#sendmessage').click(function () {
+                var name = get_App__Account(HubKey_App, get_Account());
+                _hello(name, $('#message').val());
+                $('#message').val('').focus();
+            });
+
+            start();
+        });
+    </script>
+</body>
+</html>
